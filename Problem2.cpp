@@ -3,7 +3,10 @@
 #include <complex>
 #include <cmath>
 #include <iostream>
-#include <omp.h>
+// #include <omp.h>
+#include <R.h>
+#include <Rinternals.h>
+#include <Rmath.h>
 
 using namespace std;
 
@@ -17,16 +20,14 @@ using namespace std;
 // sched: quoted string indicating which OMP scheduling method is to be used
 // chunksize: OMP chunk size
 
-int[] xticks, yticks;
-
-rmandel(nth, xl, xr, yb, yt, inc, maxiters, sched, chunksize) {
+void rmandel(int nth, int xl, int xr, int yb, int yt, double inc, int maxiters, string sched, int chunksize) {
 	
 	//temporary values for x and y
 	int xti, ytj;
 	//number of ticks on the x-axis
-	nxticks = (xr - xl) / inc;
+	int nxticks = (xr - xl) / inc;
 	//number of ticks on the y-axis
-	nyticks = (yt - yb) / inc;
+	int nyticks = (yt - yb) / inc;
 	//array set containing the tick marks on the x-axis
 	int xticks[nxticks];
 	//array set containing the tick marks on the y-axis 
@@ -44,7 +45,7 @@ rmandel(nth, xl, xr, yb, yt, inc, maxiters, sched, chunksize) {
 	bool mandelbrot[nxticks][nyticks];
 
 	//loop through the x values
-	for(i = 0; i < nxticks; i++) {
+	for(int i = 0; i < nxticks; i++) {
 		//get the current x value
 		xti = xticks[i];
 		//loop through the y values
@@ -53,11 +54,12 @@ rmandel(nth, xl, xr, yb, yt, inc, maxiters, sched, chunksize) {
 			ytj = yticks[j];
 			//create a complex variable with x as the real and y as the imaginary
 			complex<double> cpt(xti, ytj);
-			complex<double z = cpt;
-			for(k = 0; k < maxiters; k++) {
+			complex<double> z = cpt;
+			for(int k = 0; k < maxiters; k++) {
 				//mandlebrot set calculations (z -> z^2 + c)
 				z = pow(z, 2) + cpt;
-				if(abs(z) > 2) break;
+				if(abs(z) > 2) 
+					break;
 				//if we reach maxiters, that value is in the mandlebrot set
 				//so we set it to 1, otherwise it stays 0
 				if(k == maxiters)
@@ -65,8 +67,12 @@ rmandel(nth, xl, xr, yb, yt, inc, maxiters, sched, chunksize) {
 			}
 		}
 	}
-	return mandelbrot;
+	// return mandelbrot;
 };
 
+
+int main (int argc, char** argv) {
+	return 0;
+}
 
     
