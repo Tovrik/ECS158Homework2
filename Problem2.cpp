@@ -21,8 +21,8 @@ int[] xticks, yticks;
 
 rmandel(nth, xl, xr, yb, yt, inc, maxiters, sched, chunksize) {
 	
+	//temporary values for x and y
 	int xti, ytj;
-	complex<double> cpt; 
 	//number of ticks on the x-axis
 	nxticks = (xr - xl) / inc;
 	//number of ticks on the y-axis
@@ -43,15 +43,29 @@ rmandel(nth, xl, xr, yb, yt, inc, maxiters, sched, chunksize) {
 	//create array init to 0 for mandelbrot set
 	bool mandelbrot[nxticks][nyticks];
 
+	//loop through the x values
 	for(i = 0; i < nxticks; i++) {
+		//get the current x value
 		xti = xticks[i];
+		//loop through the y values
 		for (int j = 0; j < nyticks; j++) {
+			//get the current y value
 			ytj = yticks[j];
-			cpt = pow(xti, 2);
+			//create a complex variable with x as the real and y as the imaginary
+			complex<double> cpt(xti, ytj);
+			complex<double z = cpt;
+			for(k = 0; k < maxiters; k++) {
+				//mandlebrot set calculations (z -> z^2 + c)
+				z = pow(z, 2) + cpt;
+				if(abs(z) > 2) break;
+				//if we reach maxiters, that value is in the mandlebrot set
+				//so we set it to 1, otherwise it stays 0
+				if(k == maxiters)
+					mandelbrot[i][j] = 1;	
+			}
 		}
 	}
-
-
+	return mandelbrot;
 };
 
 
