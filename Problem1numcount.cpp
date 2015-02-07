@@ -30,6 +30,8 @@ int *numcount(int *x, int n, int m) {
 
 };
 
+
+
 void init(){
 	//initializes MPI
 	MPI_Init(NULL, NULL);
@@ -44,6 +46,8 @@ void init(){
 	chunk = n/nnodes;
 	start = me * chunck;
 	end = start + chunk - 1;
+
+	MPI_Scatter(sendbuf, chunk, MPI_INT, rbuf, ;
 };
 
 
