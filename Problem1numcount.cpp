@@ -6,13 +6,11 @@
 
 using namespace std;
 
-
 int nnodes, //total number of nodes
 chunk,    //number of array elements looked at by each node
 start,    //start index for given process
 end,    //end index for given process
 me;     //process number
-
 
 // unordered_map <string, int> globalHash;
 // unordered_map <int, int> t0;
@@ -32,6 +30,8 @@ int *numcount(int *x, int n, int m) {
     chunk = n / nnodes;
     // This is the global hash that the node 0 maintains
     unordered_map<string, int> globalHash;
+
+
   }
 
   // For all the other nodes
@@ -39,20 +39,24 @@ int *numcount(int *x, int n, int m) {
     // Determine its chunks
     start = (me - 1) * chunk;
     end = start + chunk - 1;
-
-    stringstream convert;
+    int firstIter = 0;
+    int lastIter = m;
+    
     for(int i = start; i < end; i++) {
-      if(i == end - 1)
-        convert << x[i];
-      else
-        convert << x[i] << ",";
+      stringstream convert;
+      for(int j = firstIter; j < lastIter; j++) {
+        if(i == end - 1)
+          convert << x[i];
+        else
+          convert << x[i] << ",";
+      }
+      string key = convert.str();
+      localCopy[key]++;
+      // move our gaze to the next chunk of size m
+      firstIter++;
+      lastIter++;
     }
-    string key = convert.str();
-    localCopy[key]++;
 
-    // move our gaze to the next chunk of size m
-    start++;
-    end++;
     vector<string> keys;
     vector<int> values;
 
@@ -62,12 +66,12 @@ int *numcount(int *x, int n, int m) {
 
       keys.push_back(key);
       values.push_back(temp);
-
-      // Send to the master node all the vectors of keys and values
-      for(int i = 1; i < nnodes; i++) {
-        MPI_Send(&keys[0], keys.size(), MPI_CHAR, 0, 0, MPI_COMM_WORLD);
-        MPI_Send(&values[0], values.size(), MPI_CHAR, 0, 0, MPI_COMM_WORLD);
-      }
+    }
+    // Send to the master node all the vectors of keys and values
+    for(int i = 1; i < nnodes; i++) {
+      MPI_Send(&keys[0], keys.size(), MPI_CHAR, 0, 0, MPI_COMM_WORLD);
+      MPI_Send(&values[0], values.size(), MPI_INT, 0, 0, MPI_COMM_WORLD);
+    }
   }
 
 
