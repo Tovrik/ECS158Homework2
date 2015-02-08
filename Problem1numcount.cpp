@@ -68,10 +68,10 @@ int *numcount(int *x, int n, int m) {
       values.push_back(temp);
     }
     // Send to the master node all the vectors of keys and values
-    for(int i = 1; i < nnodes; i++) {
-      MPI_Send(&keys[0], keys.size(), MPI_CHAR, 0, 0, MPI_COMM_WORLD);
-      MPI_Send(&values[0], values.size(), MPI_INT, 0, 0, MPI_COMM_WORLD);
-    }
+    //for(int i = 1; i < nnodes; i++) {
+      MPI_Send(&keys[0], keys.size(), MPI_CHAR, me, 0, MPI_COMM_WORLD);
+      MPI_Send(&values[0], values.size(), MPI_INT, me, 0, MPI_COMM_WORLD);
+    //}
   }
 
 
