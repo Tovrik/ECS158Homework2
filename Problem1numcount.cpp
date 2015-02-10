@@ -156,7 +156,7 @@ int *numcount(int *x, int n, int m) {
 
 
 
-void Init(int Argc, char** Argv){
+void Init(){
   //initializes MPI
   MPI_Init(NULL, NULL);
   //sets nnodes (number of nodes)
@@ -166,8 +166,8 @@ void Init(int Argc, char** Argv){
 };
 
 
-int main(int argc, char** argv){
-  Init(argc, argv);
+int main(){
+  Init();
 
   // Matloff's example
   //double t1, t2;
