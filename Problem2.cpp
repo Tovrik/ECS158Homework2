@@ -20,6 +20,10 @@ using namespace std;
 // sched: quoted string indicating which OMP scheduling method is to be used
 // chunksize: OMP chunk size
 
+// Yo, stefo after I briefly read Matloff's tutorial for Rcpp, I belive the return type/header
+// see 5.5.6 of the tutorial
+// should be
+// RcppExport SEXP rmandel(blablabla)
 void rmandel(int nth, int xl, int xr, int yb, int yt, double inc, int maxiters, string sched, int chunksize) {
 	
 	//temporary values for x and y
@@ -42,6 +46,7 @@ void rmandel(int nth, int xl, int xr, int yb, int yt, double inc, int maxiters, 
 		yticks[i] = yticks[i-1] + inc;   
 
 	//create array init to 0 for mandelbrot set
+	// Maybe this should be Rcpp : : NumericMatrix????
 	bool mandelbrot[nxticks][nyticks];
 
 	//loop through the x values
