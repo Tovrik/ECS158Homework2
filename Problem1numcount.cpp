@@ -30,14 +30,14 @@ int *numcount(int *x, int n, int m) {
     unordered_map<string, int> globalHash;
     for(int t = 0; t < nnodes - 1; t++){
       // OUR APPROACH FOR THE BELOW IS GOING TO BE THIS
-      // 1. COLLECT / RECEIVE THE MINI HASH MAPS IN ARRAY FORM
-      // IN WHICH THIS IS THE FORM (KEY1|KEY2|KEY3|COUNT1|... WHEN M = 3)
+      // 1. COLLECT / RECEIVE THE MINI HASH MAPS FROM ALL THE WORKERS
+      // IN ARRAY FORM IN WHICH THIS IS THE FORM (KEY1|KEY2|KEY3|COUNT1|... WHEN M = 3)
       // FOR EXAMPLE
       // 2. TAKE THOSE ARRAYS AND PUT THE KEYS IN HASH MAP AND INCREMENT
       // THE COUNT FROM THE MINI HASH MAPS
 
       // HERE IS THE IMPORTANT PART(PLEASE READ)!!
-      // WE CAN DYNAMICALLY DETERMINE THE BUFFER LENGTH AND
+      // WE CAN DYNAMICALLY DETERMINE THE BUFFER LENGTH FROM RECEIVE AND
       // TURNS OUT EVEN N IS NOT A GOOD APPROX.
       // HENCE WE USE PROBE AND GET_COUNT TO GET THE BUFFER LENGTH
       int buffer_size;
@@ -45,6 +45,7 @@ int *numcount(int *x, int n, int m) {
       MPI_Get_count(&status, MPI_INT, &buffer_size);
 
       // BASED ON WHAT WE DYNAMICALLY RECEIVE, CONSTRUCT A BUFFER
+      // TO HOLD THE ELEMENTS
       int* buffer = new int[buffer_size * sizeof(int)]; 
       MPI_Recv(buffer, // Where we are storing the array
         buffer_size, // Buffer size, overestimating because it can't be bigger than n
@@ -57,7 +58,7 @@ int *numcount(int *x, int n, int m) {
 
       // THE RECEIVED BUFFER IS IN THE FORM OF KEY1,KEY2,KEY3,COUNT1
       // KEY2,KEY3,KEY4,COUNT2 WHEN M = 3 FOR EXAMPLE, SO RUN THE FOR
-      // LOOP ACCORDING TO THAT
+      // LOOP ACCORDING TO THAT ARRANGEMENT / PATTERN
       // After receive array, put in hash map
       for(int i = 0; i < buffer_size; i = i + m + 1){
         stringstream convert;
@@ -115,10 +116,12 @@ int *numcount(int *x, int n, int m) {
   else {
     // Determine its chunks
     startx = (me - 1) * chunk;
+    // This boundaries formula and scenario is very similar
+    // to homework 1
     if(me == (nnodes-1))
       endx = n - m + 1; //account for last thread taking care of rest of array
     else
-      endx = startx + chunk; //the (-2 + m) is for overlap without redundancy
+      endx = startx + chunk;
     
     // Encode and put it into hash table
     for(int i = startx; i < endx; i++) {
