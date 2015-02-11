@@ -5,8 +5,8 @@
 #include <iostream>
 // #include <omp.h>
 #include <R.h>
-#include <Rinternals.h>
-#include <Rmath.h>
+// #include <Rinternals.h>
+// #include <Rmath.h>
 
 using namespace std;
 
@@ -19,6 +19,16 @@ using namespace std;
 // maxiters: maximum number of iterations
 // sched: quoted string indicating which OMP scheduling method is to be used
 // chunksize: OMP chunk size
+
+int nth = 8,
+xl = -2, 
+xr = 1,
+yb = -1, 
+yt = 1,
+maxiters = 10,
+chunksize = 30;
+double inc = 0.1;
+string sched = "static";
 
 void rmandel(int nth, int xl, int xr, int yb, int yt, double inc, int maxiters, string sched, int chunksize) {
 	
@@ -72,6 +82,7 @@ void rmandel(int nth, int xl, int xr, int yb, int yt, double inc, int maxiters, 
 
 
 int main (int argc, char** argv) {
+	rmandel(nth, xl, xr, yb, yt, inc, maxiters, sched, chunksize);
 	return 0;
 }
 
