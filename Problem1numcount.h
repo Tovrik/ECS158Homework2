@@ -1,0 +1,1 @@
+extern int *numcount(int *x, int n, int m);

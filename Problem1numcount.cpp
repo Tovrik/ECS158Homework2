@@ -159,7 +159,7 @@ int *numcount(int *x, int n, int m) {
 
 
 
-void Init(int Argc, char** Argv){
+void Init(){
   //initializes MPI
   MPI_Init(NULL, NULL);
   //sets nnodes (number of nodes)
@@ -169,38 +169,38 @@ void Init(int Argc, char** Argv){
 };
 
 
-int main(int argc, char** argv){
-  Init(argc, argv);
+// int main(){
+//   Init();
 
-  // Matloff's example
-  //double t1, t2;
-  int x[]={3,4,5,12,13,4,5,12,4,5,6,3,4,5,13,4,5};
-  // Turns out this is how you time
-  // Will print nnodes times since the
-  // same program will run on multiple machines
+//   // Matloff's example
+//   //double t1, t2;
+//   int x[]={3,4,5,12,13,4,5,12,4,5,6,3,4,5,13,4,5};
+//   // Turns out this is how you time
+//   // Will print nnodes times since the
+//   // same program will run on multiple machines
   
-  //t1 = MPI_Wtime();
-  int *results = numcount(x, 17, 3);
-  //t2 = MPI_Wtime();
-  //cout << "Elapsed time is " << (t2-t1) << " seconds." << endl;
+//   //t1 = MPI_Wtime();
+//   int *results = numcount(x, 17, 3);
+//   //t2 = MPI_Wtime();
+//   //cout << "Elapsed time is " << (t2-t1) << " seconds." << endl;
 
-  // Stefan's testing data
-  // int array_size = 1000000;
-  // int x[array_size];
-  // for(int i = 0; i < array_size; i++)
-  //   x[i] = rand()%100+1;
-  // int * y;
-  // y = x;
+//   // Stefan's testing data
+//   // int array_size = 1000000;
+//   // int x[array_size];
+//   // for(int i = 0; i < array_size; i++)
+//   //   x[i] = rand()%100+1;
+//   // int * y;
+//   // y = x;
 
-  // Turns out this is how you time
-  // Will print nnodes times since the
-  // same program will run on multiple machines
-  // double t1, t2;
-  // t1 = MPI_Wtime();
-  // int *test = numcount(y, array_size, 6);
-  // t2 = MPI_Wtime();
-  // cout << "Elapsed time is " << (t2-t1) << " seconds." << endl;
+//   // Turns out this is how you time
+//   // Will print nnodes times since the
+//   // same program will run on multiple machines
+//   // double t1, t2;
+//   // t1 = MPI_Wtime();
+//   // int *test = numcount(y, array_size, 6);
+//   // t2 = MPI_Wtime();
+//   // cout << "Elapsed time is " << (t2-t1) << " seconds." << endl;
 
-  MPI_Finalize();
-  return 0;
-}
+//   MPI_Finalize();
+//   return 0;
+// }
