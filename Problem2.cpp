@@ -5,8 +5,7 @@
 #include <iostream>
 // #include <omp.h>
 #include <R.h>
-// #include <Rinternals.h>
-// #include <Rmath.h>
+
 
 using namespace std;
 
@@ -19,6 +18,8 @@ using namespace std;
 // maxiters: maximum number of iterations
 // sched: quoted string indicating which OMP scheduling method is to be used
 // chunksize: OMP chunk size
+
+extern ”C” rmandel;
 
 int nth = 8,
 xl = -2, 
@@ -34,7 +35,7 @@ string sched = "static";
 // see 5.5.6 of the tutorial
 // should be
 // RcppExport SEXP rmandel(blablabla)
-void rmandel(int nth, int xl, int xr, int yb, int yt, double inc, int maxiters, string sched, int chunksize) {
+RcppExport SEXP rmandel(int nth, int xl, int xr, int yb, int yt, double inc, int maxiters, string sched, int chunksize) {
 	
 	//temporary values for x and y
 	int xti, ytj;
@@ -56,8 +57,8 @@ void rmandel(int nth, int xl, int xr, int yb, int yt, double inc, int maxiters, 
 		yticks[i] = yticks[i-1] + inc;   
 
 	//create array init to 0 for mandelbrot set
-	// Maybe this should be Rcpp : : NumericMatrix????
-	bool mandelbrot[nxticks][nyticks];
+	Rcpp::NumericMatrix mandlebrot(nxticks, nyticks);
+	// int mandelbrot[nxticks][nyticks];
 
 	//loop through the x values
 	for(int i = 0; i < nxticks; i++) {
@@ -78,7 +79,7 @@ void rmandel(int nth, int xl, int xr, int yb, int yt, double inc, int maxiters, 
 				//if we reach maxiters, that value is in the mandlebrot set
 				//so we set it to 1, otherwise it stays 0
 				if(k == maxiters)
-					mandelbrot[i][j] = 1;	
+					mandelbrot(i,j) = 1;	
 			}
 		}
 	}
