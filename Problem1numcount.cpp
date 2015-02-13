@@ -169,8 +169,8 @@ void Init(){
 };
 
 
-// int main(){
-//   Init();
+int main(){
+  Init();
 
 //   // Matloff's example
 //   //double t1, t2;
@@ -185,22 +185,22 @@ void Init(){
 //   //cout << "Elapsed time is " << (t2-t1) << " seconds." << endl;
 
 //   // Stefan's testing data
-//   // int array_size = 1000000;
-//   // int x[array_size];
-//   // for(int i = 0; i < array_size; i++)
-//   //   x[i] = rand()%100+1;
-//   // int * y;
-//   // y = x;
+  int array_size = 1000000;
+  int x[array_size];
+  for(int i = 0; i < array_size; i++)
+    x[i] = rand()%100+1;
+  int * y;
+  y = x;
 
 //   // Turns out this is how you time
 //   // Will print nnodes times since the
 //   // same program will run on multiple machines
-//   // double t1, t2;
-//   // t1 = MPI_Wtime();
-//   // int *test = numcount(y, array_size, 6);
-//   // t2 = MPI_Wtime();
-//   // cout << "Elapsed time is " << (t2-t1) << " seconds." << endl;
+  double t1, t2;
+  t1 = MPI_Wtime();
+  int *test = numcount(y, array_size, 6);
+  t2 = MPI_Wtime();
+  cout << "Elapsed time is " << (t2-t1) << " seconds." << endl;
 
-//   MPI_Finalize();
-//   return 0;
-// }
+  MPI_Finalize();
+  return 0;
+}

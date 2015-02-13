@@ -84,30 +84,26 @@ SEXP rmandel(SEXP _nth, SEXP _xl, SEXP _xr, SEXP _yb, SEXP _yt, SEXP _inc, SEXP 
 	for(int i = 1; i < nyticks; i++)
 		yticks[i] = yticks[i-1] + inc;   
 
-	SEXP Rval
+	SEXP Rval;
 	//create array init to 0 for mandelbrot set
-	PROTECT(Rval = allocVector(INTSXP, nxticks);
-
-	
+	PROTECT(Rval = allocMatrix(INTSXP, nxticks, nyticks));
+	UNPROTECT(1);
+	double *rRval;
+	rRval = REAL(Rval);
 	// int mandelbrot[nxticks][nyticks];
 
 	//handles the sched variable passed in which controls scheduling in OMP
-    switch (sched)
-    {
-        case "guided":
-           	#pragma omp for schedule(guided);
-           	break; 
-        case "static":
-           	#pragma omp for schedule(static);
-           	break;
-        case "dynamic":
-        	#pragma omp for schedule(dynamic);
-        	break;   	
-        case "runtime":
-        	#pragma omp for schedule(runtime);
-        	break;	
-        default:
-        	break;
+    if(sched == "guided") {
+        #pragma omp for schedule(guided)
+    }
+    else if(sched == "static") {
+        #pragma omp for schedule(static)
+    }
+    else if(sched == "dynamic") {
+        #pragma omp for schedule(dynamic) 
+    }  	
+    else if(sched == "runtime") {
+        #pragma omp for schedule(runtime)
     }
 	//loop through the x values
 	for(int i = 0; i < nxticks; i++) {
@@ -128,11 +124,11 @@ SEXP rmandel(SEXP _nth, SEXP _xl, SEXP _xr, SEXP _yb, SEXP _yt, SEXP _inc, SEXP 
 				//if we reach maxiters, that value is in the mandlebrot set
 				//so we set it to 1, otherwise it stays 0
 				if(k == maxiters)
-					mandelbrot(i,j) = 1;	
+					rRval[i + nyticks*j] = 1;	
 			}
 		}
 	}
-	return mandelbrot;
+	return Rval;
 };
 
 

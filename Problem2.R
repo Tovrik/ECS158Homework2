@@ -1,4 +1,3 @@
-library(Rcpp)
 dyn.load("Problem2.so")
 
 #nth: number of threads
@@ -20,6 +19,5 @@ sched = "static"
 #chunksize: OMP chunk size
 chunksize <- 1000
 
-
-m <- .Call("rmandel", nth, xl, xr, yb, yt, inc, maxiters, sched, chunksize)
+.Call("rmandel", nth, xl, xr, yb, yt, inc, maxiters, sched, chunksize)
 
