@@ -5,6 +5,8 @@
 #include <iostream>
 // #include <omp.h>
 #include <R.h>
+#include <Rinternals.h>
+#include <Rmath.h>
 
 
 using namespace std;
@@ -19,24 +21,50 @@ using namespace std;
 // sched: quoted string indicating which OMP scheduling method is to be used
 // chunksize: OMP chunk size
 
-extern ”C” rmandel;
-
-int nth = 8,
-xl = -2, 
-xr = 1,
-yb = -1, 
-yt = 1,
-maxiters = 10,
-chunksize = 30;
-double inc = 0.1;
-string sched = "static";
+// int nth = 8,
+// xl = -2, 
+// xr = 1,
+// yb = -1, 
+// yt = 1,
+// maxiters = 10,
+// chunksize = 30;
+// double inc = 0.1;
+// string sched = "static";
 
 // Yo, stefo after I briefly read Matloff's tutorial for Rcpp, I belive the return type/header
 // see 5.5.6 of the tutorial
 // should be
 // RcppExport SEXP rmandel(blablabla)
-RcppExport SEXP rmandel(int nth, int xl, int xr, int yb, int yt, double inc, int maxiters, string sched, int chunksize) {
+SEXP rmandel(SEXP _nth, SEXP _xl, SEXP _xr, SEXP _yb, SEXP _yt, SEXP _inc, SEXP _maxiters, SEXP _sched, SEXP _chunksize) {
 	
+	_nth = coerceVector(_nth, INTSXP);
+	int nth = INTEGER(_nth)[0];
+
+	_xl = coerceVector(_xl, INTSXP);
+	int xl = INTEGER(_xl)[0];
+
+	_xr = coerceVector(_xr, INTSXP);
+	int xr = INTEGER(_xr)[0];
+
+	_yb = coerceVector(_yb, INTSXP);
+	int yb = INTEGER(_yb)[0];
+
+	_yt = coerceVector(_yt, INTSXP);
+	int yt = INTEGER(_yt)[0];
+
+	_inc = coerceVector(_inc, REALSXP);
+	double inc = REAL(_inc)[0];
+
+	_maxiters = coerceVector(_maxiters, INTSXP);
+	int maxiters = INTEGER(_maxiters)[0];
+
+	string sched = CHAR(STRING_ELT(_sched,0));
+
+	_chunksize = coerceVector(_chunksize, INTSXP);
+	int chunksize = INTEGER(_chunksize)[0];
+
+
+
 	//temporary values for x and y
 	int xti, ytj;
 	//number of ticks on the x-axis
@@ -56,10 +84,31 @@ RcppExport SEXP rmandel(int nth, int xl, int xr, int yb, int yt, double inc, int
 	for(int i = 1; i < nyticks; i++)
 		yticks[i] = yticks[i-1] + inc;   
 
+	SEXP Rval
 	//create array init to 0 for mandelbrot set
-	Rcpp::NumericMatrix mandlebrot(nxticks, nyticks);
+	PROTECT(Rval = allocVector(INTSXP, nxticks);
+
+	
 	// int mandelbrot[nxticks][nyticks];
 
+	//handles the sched variable passed in which controls scheduling in OMP
+    switch (sched)
+    {
+        case "guided":
+           	#pragma omp for schedule(guided);
+           	break; 
+        case "static":
+           	#pragma omp for schedule(static);
+           	break;
+        case "dynamic":
+        	#pragma omp for schedule(dynamic);
+        	break;   	
+        case "runtime":
+        	#pragma omp for schedule(runtime);
+        	break;	
+        default:
+        	break;
+    }
 	//loop through the x values
 	for(int i = 0; i < nxticks; i++) {
 		//get the current x value
@@ -83,12 +132,12 @@ RcppExport SEXP rmandel(int nth, int xl, int xr, int yb, int yt, double inc, int
 			}
 		}
 	}
-	// return mandelbrot;
+	return mandelbrot;
 };
 
 
 int main (int argc, char** argv) {
-	rmandel(nth, xl, xr, yb, yt, inc, maxiters, sched, chunksize);
+	// rmandel(nth, xl, xr, yb, yt, inc, maxiters, sched, chunksize);
 	return 0;
 }
 
