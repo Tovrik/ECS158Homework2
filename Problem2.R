@@ -1,4 +1,3 @@
-library("Rcpp")
 dyn.load("Problem2.so")
 
 #nth: number of threads
@@ -21,4 +20,4 @@ sched = "static"
 chunksize <- 1000
 
 m <- .Call("rmandel", nth, xl, xr, yb, yt, inc, maxiters, sched, chunksize)
-
+#print(m)

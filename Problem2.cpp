@@ -35,6 +35,8 @@ using namespace std;
 // see 5.5.6 of the tutorial
 // should be
 // RcppExport SEXP rmandel(blablabla)
+
+extern "C" {
 SEXP rmandel(SEXP _nth, SEXP _xl, SEXP _xr, SEXP _yb, SEXP _yt, SEXP _inc, SEXP _maxiters, SEXP _sched, SEXP _chunksize) {
 	
 	_nth = coerceVector(_nth, INTSXP);
@@ -86,7 +88,7 @@ SEXP rmandel(SEXP _nth, SEXP _xl, SEXP _xr, SEXP _yb, SEXP _yt, SEXP _inc, SEXP 
 
 	SEXP Rval;
 	//create array init to 0 for mandelbrot set
-	PROTECT(Rval = allocMatrix(INTSXP, nxticks, nyticks));
+	Rval = PROTECT(allocMatrix(REALSXP, nxticks, nyticks));
 	UNPROTECT(1);
 	double *rRval;
 	rRval = REAL(Rval);
@@ -130,7 +132,7 @@ SEXP rmandel(SEXP _nth, SEXP _xl, SEXP _xr, SEXP _yb, SEXP _yt, SEXP _inc, SEXP 
 	}
 	return Rval;
 };
-
+}
 
 int main (int argc, char** argv) {
 	// rmandel(nth, xl, xr, yb, yt, inc, maxiters, sched, chunksize);
