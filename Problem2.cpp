@@ -68,15 +68,15 @@ SEXP rmandel(SEXP _nth, SEXP _xl, SEXP _xr, SEXP _yb, SEXP _yt, SEXP _inc, SEXP 
 
 
 	//temporary values for x and y
-	int xti, ytj;
+	double xti, ytj;
 	//number of ticks on the x-axis
 	int nxticks = (xr - xl) / inc;
 	//number of ticks on the y-axis
 	int nyticks = (yt - yb) / inc;
 	//array set containing the tick marks on the x-axis
-	int xticks[nxticks];
+	double xticks[nxticks];
 	//array set containing the tick marks on the y-axis 
-	int yticks[nyticks];
+	double yticks[nyticks];
 	//set the left most tick mark
 	xticks[0] = xl;
 	for(int i = 1; i < nxticks; i++)
@@ -117,10 +117,13 @@ SEXP rmandel(SEXP _nth, SEXP _xl, SEXP _xr, SEXP _yb, SEXP _yt, SEXP _inc, SEXP 
 			ytj = yticks[j];
 			//create a complex variable with x as the real and y as the imaginary
 			complex<double> cpt(xti, ytj);
+			//cout << "xti " << xti << endl;
+			//cout << "yti " << ytj << endl;
 			complex<double> z = cpt;
-			for(int k = 0; k < maxiters; k++) {
+			for(int k = 0; k <= maxiters; k++) {
 				//mandlebrot set calculations (z -> z^2 + c)
 				z = pow(z, 2) + cpt;
+				// cout << "z = " << z << endl;
 				if(abs(z) > 2) 
 					break;
 				//if we reach maxiters, that value is in the mandlebrot set

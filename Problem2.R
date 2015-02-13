@@ -11,7 +11,7 @@ yb <- -1
 #yt: top limit
 yt <- 1
 #inc: distance between ticks on X, Y axes
-inc <- 0.01
+inc <- 0.1
 #maxiters: maximum number of iterations
 maxiters <- 10
 #sched: quoted string indicating which OMP scheduling method is to be used
@@ -20,4 +20,4 @@ sched = "static"
 chunksize <- 1000
 
 m <- .Call("rmandel", nth, xl, xr, yb, yt, inc, maxiters, sched, chunksize)
-#print(m)
+image(m)
