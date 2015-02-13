@@ -3,7 +3,7 @@
 #include <complex>
 #include <cmath>
 #include <iostream>
-// #include <omp.h>
+#include <omp.h>
 #include <R.h>
 #include <Rinternals.h>
 #include <Rmath.h>
@@ -89,7 +89,6 @@ SEXP rmandel(SEXP _nth, SEXP _xl, SEXP _xr, SEXP _yb, SEXP _yt, SEXP _inc, SEXP 
 	SEXP Rval;
 	//create array init to 0 for mandelbrot set
 	Rval = PROTECT(allocMatrix(REALSXP, nxticks, nyticks));
-	UNPROTECT(1);
 	double *rRval;
 	rRval = REAL(Rval);
 	// int mandelbrot[nxticks][nyticks];
@@ -133,6 +132,7 @@ SEXP rmandel(SEXP _nth, SEXP _xl, SEXP _xr, SEXP _yb, SEXP _yt, SEXP _inc, SEXP 
 			}
 		}
 	}
+	UNPROTECT(1);
 	return Rval;
 };
 }

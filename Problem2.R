@@ -20,4 +20,5 @@ sched = "static"
 chunksize <- 1000
 
 m <- .Call("rmandel", nth, xl, xr, yb, yt, inc, maxiters, sched, chunksize)
+#print(m)
 image(m)
