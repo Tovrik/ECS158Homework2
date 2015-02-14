@@ -16,7 +16,19 @@ startx,    //start index for given process
 endx,    //end index for given process
 me;     //process number
 
+// Each one of the nodes is going to
+// have its own local copy
 unordered_map <string, int> localCopy;
+
+void Init(){
+  //initializes MPI
+  MPI_Init(NULL, NULL);
+  //sets nnodes (number of nodes)
+  MPI_Comm_size(MPI_COMM_WORLD, &nnodes); 
+  //sets me (thread number)
+  MPI_Comm_rank(MPI_COMM_WORLD, &me);
+};
+
 
 int *numcount(int *x, int n, int m) {
   // Master node
@@ -97,18 +109,17 @@ int *numcount(int *x, int n, int m) {
 
   // Left here for debugging purposes
   // STEFAN AND BIJAN, you guys can uncomment this if you wanna test
-  // cout << "Size of the results array is: " << results[0] << endl;
-  // for(int i = 1; i < results.size(); i++ ) {
-  //   cout << results[i] << ",";
-  //   if(i % (m + 1) == 0)
-  //     cout << endl;
-  // }
-  // cout << endl;
+   // cout << "Size of the results array is: " << results[0] << endl;
+   // for(int i = 1; i < results.size(); i++ ) {
+   //   cout << results[i] << ",";
+   //   if(i % (m + 1) == 0)
+   //     cout << endl;
+   // }
+   // cout << endl;
 
   // RETURN A POINTER TO THE ARRAY
   // SINCE RESULTS IS A VECTOR
   return &results[0];
-
   //DO NOT FORGET TO RETURN SHIT
   }
 
@@ -157,50 +168,10 @@ int *numcount(int *x, int n, int m) {
   }
 };
 
-
-
-void Init(){
-  //initializes MPI
-  MPI_Init(NULL, NULL);
-  //sets nnodes (number of nodes)
-  MPI_Comm_size(MPI_COMM_WORLD, &nnodes); 
-  //sets me (thread number)
-  MPI_Comm_rank(MPI_COMM_WORLD, &me);
-};
-
-
-int main(){
-  Init();
-
-//   // Matloff's example
-//   //double t1, t2;
-//   int x[]={3,4,5,12,13,4,5,12,4,5,6,3,4,5,13,4,5};
-//   // Turns out this is how you time
-//   // Will print nnodes times since the
-//   // same program will run on multiple machines
-  
-//   //t1 = MPI_Wtime();
-//   int *results = numcount(x, 17, 3);
-//   //t2 = MPI_Wtime();
-//   //cout << "Elapsed time is " << (t2-t1) << " seconds." << endl;
-
-//   // Stefan's testing data
-  int array_size = 1000000;
-  int x[array_size];
-  for(int i = 0; i < array_size; i++)
-    x[i] = rand()%100+1;
-  int * y;
-  y = x;
-
-//   // Turns out this is how you time
-//   // Will print nnodes times since the
-//   // same program will run on multiple machines
-  double t1, t2;
-  t1 = MPI_Wtime();
-  int *test = numcount(y, array_size, 6);
-  t2 = MPI_Wtime();
-  cout << "Elapsed time is " << (t2-t1) << " seconds." << endl;
-
-  MPI_Finalize();
-  return 0;
-}
+// The main is going to do the
+// Init() and Finalize()
+// int main(){
+//   Init();
+//   MPI_Finalize();
+//   return 0;
+// }
