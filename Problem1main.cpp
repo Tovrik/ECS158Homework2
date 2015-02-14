@@ -9,13 +9,13 @@ int main(){
 
   // Matloff's example
   //double t1, t2;
-  int x[]={3,4,5,12,13,4,5,12,4,5,6,3,4,5,13,4,5};
+  //int x[]={3,4,5,12,13,4,5,12,4,5,6,3,4,5,13,4,5};
   // Turns out this is how you time
   // Will print nnodes times since the
   // same program will run on multiple machines
   
   //t1 = MPI_Wtime();
-  int *results = numcount(x, 17, 3);
+  //int *results = numcount(x, 17, 3);
   //t2 = MPI_Wtime();
   //cout << "Elapsed time is " << (t2-t1) << " seconds." << endl;
 
