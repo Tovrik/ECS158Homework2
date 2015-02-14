@@ -8,7 +8,6 @@
 #include <Rinternals.h>
 #include <Rmath.h>
 
-
 using namespace std;
 
 // nth: number of threads
@@ -38,108 +37,107 @@ using namespace std;
 
 extern "C" {
 SEXP rmandel(SEXP _nth, SEXP _xl, SEXP _xr, SEXP _yb, SEXP _yt, SEXP _inc, SEXP _maxiters, SEXP _sched, SEXP _chunksize) {
-	
-	_nth = coerceVector(_nth, INTSXP);
-	int nth = INTEGER(_nth)[0];
+    
+    _nth = coerceVector(_nth, INTSXP);
+    int nth = INTEGER(_nth)[0];
 
-	_xl = coerceVector(_xl, INTSXP);
-	int xl = INTEGER(_xl)[0];
+    _xl = coerceVector(_xl, INTSXP);
+    int xl = INTEGER(_xl)[0];
 
-	_xr = coerceVector(_xr, INTSXP);
-	int xr = INTEGER(_xr)[0];
+    _xr = coerceVector(_xr, INTSXP);
+    int xr = INTEGER(_xr)[0];
 
-	_yb = coerceVector(_yb, INTSXP);
-	int yb = INTEGER(_yb)[0];
+    _yb = coerceVector(_yb, INTSXP);
+    int yb = INTEGER(_yb)[0];
 
-	_yt = coerceVector(_yt, INTSXP);
-	int yt = INTEGER(_yt)[0];
+    _yt = coerceVector(_yt, INTSXP);
+    int yt = INTEGER(_yt)[0];
 
-	_inc = coerceVector(_inc, REALSXP);
-	double inc = REAL(_inc)[0];
+    _inc = coerceVector(_inc, REALSXP);
+    double inc = REAL(_inc)[0];
 
-	_maxiters = coerceVector(_maxiters, INTSXP);
-	int maxiters = INTEGER(_maxiters)[0];
+    _maxiters = coerceVector(_maxiters, INTSXP);
+    int maxiters = INTEGER(_maxiters)[0];
 
-	string sched = CHAR(STRING_ELT(_sched,0));
+    string sched = CHAR(STRING_ELT(_sched,0));
 
-	_chunksize = coerceVector(_chunksize, INTSXP);
-	int chunksize = INTEGER(_chunksize)[0];
+    _chunksize = coerceVector(_chunksize, INTSXP);
+    int chunksize = INTEGER(_chunksize)[0];
 
+    //temporary values for x and y
+    double xti, ytj;
+    //number of ticks on the x-axis
+    int nxticks = (xr - xl) / inc;
+    //number of ticks on the y-axis
+    int nyticks = (yt - yb) / inc;
+    //array set containing the tick marks on the x-axis
+    double xticks[nxticks];
+    //array set containing the tick marks on the y-axis 
+    double yticks[nyticks];
+    //set the left most tick mark
+    xticks[0] = xl;
+    for(int i = 1; i < nxticks; i++)
+        xticks[i] = xticks[i-1] + inc;
+    //set the bottom most tick mark
+    yticks[0] = yb;
+    for(int i = 1; i < nyticks; i++)
+        yticks[i] = yticks[i-1] + inc;   
 
+    SEXP Rval;
+    //create array init to 0 for mandelbrot set
+    Rval = PROTECT(allocMatrix(REALSXP, nxticks, nyticks));
+    double *rRval;
+    rRval = REAL(Rval);
+    // int mandelbrot[nxticks][nyticks];
 
-	//temporary values for x and y
-	double xti, ytj;
-	//number of ticks on the x-axis
-	int nxticks = (xr - xl) / inc;
-	//number of ticks on the y-axis
-	int nyticks = (yt - yb) / inc;
-	//array set containing the tick marks on the x-axis
-	double xticks[nxticks];
-	//array set containing the tick marks on the y-axis 
-	double yticks[nyticks];
-	//set the left most tick mark
-	xticks[0] = xl;
-	for(int i = 1; i < nxticks; i++)
-		xticks[i] = xticks[i-1] + inc;
-	//set the bottom most tick mark
-	yticks[0] = yb;
-	for(int i = 1; i < nyticks; i++)
-		yticks[i] = yticks[i-1] + inc;   
-
-	SEXP Rval;
-	//create array init to 0 for mandelbrot set
-	Rval = PROTECT(allocMatrix(REALSXP, nxticks, nyticks));
-	double *rRval;
-	rRval = REAL(Rval);
-	// int mandelbrot[nxticks][nyticks];
-
-	//handles the sched variable passed in which controls scheduling in OMP
-    if(sched == "guided") {
-        #pragma omp for schedule(guided)
+    //handles the sched variable passed in which controls scheduling in OMP
+    
+    //loop through the x values
+  //   if(sched == "guided") {
+		// #pragma omp for schedule(guided,chunksize)
+  //   }
+  //   else if(sched == "static") {
+		// #pragma omp for schedule(static,chunksize)
+  //   }
+  //   else if(sched == "dynamic") {
+  //       #pragma omp for schedule(dynamic,chunksize) 
+  //   }   
+  //   else if(sched == "runtime") {
+  //       #pragma omp for schedule(runtime)
+  //   }
+    #pragma omp for schedule (static,chunksize)
+    for(int i = 0; i < nxticks; i++) {
+    	
+        //get the current x value
+        xti = xticks[i];
+        //loop through the y values
+        for (int j = 0; j < nyticks; j++) {
+            //get the current y value
+            ytj = yticks[j];
+            //create a complex variable with x as the real and y as the imaginary
+            complex<double> cpt(xti, ytj);
+            //cout << "xti " << xti << endl;
+            //cout << "yti " << ytj << endl;
+            complex<double> z = cpt;
+            for(int k = 0; k <= maxiters; k++) {
+                //mandlebrot set calculations (z -> z^2 + c)
+                z = pow(z, 2) + cpt;
+                // cout << "z = " << z << endl;
+                if(abs(z) > 2) 
+                    break;
+                //if we reach maxiters, that value is in the mandlebrot set
+                //so we set it to 1, otherwise it stays 0
+                if(k == maxiters)
+                    rRval[i + nyticks*j] = 1;   
+            }
+        }
     }
-    else if(sched == "static") {
-        #pragma omp for schedule(static)
-    }
-    else if(sched == "dynamic") {
-        #pragma omp for schedule(dynamic) 
-    }  	
-    else if(sched == "runtime") {
-        #pragma omp for schedule(runtime)
-    }
-	//loop through the x values
-	for(int i = 0; i < nxticks; i++) {
-		//get the current x value
-		xti = xticks[i];
-		//loop through the y values
-		for (int j = 0; j < nyticks; j++) {
-			//get the current y value
-			ytj = yticks[j];
-			//create a complex variable with x as the real and y as the imaginary
-			complex<double> cpt(xti, ytj);
-			//cout << "xti " << xti << endl;
-			//cout << "yti " << ytj << endl;
-			complex<double> z = cpt;
-			for(int k = 0; k <= maxiters; k++) {
-				//mandlebrot set calculations (z -> z^2 + c)
-				z = pow(z, 2) + cpt;
-				// cout << "z = " << z << endl;
-				if(abs(z) > 2) 
-					break;
-				//if we reach maxiters, that value is in the mandlebrot set
-				//so we set it to 1, otherwise it stays 0
-				if(k == maxiters)
-					rRval[i + nyticks*j] = 1;	
-			}
-		}
-	}
-	UNPROTECT(1);
-	return Rval;
+    UNPROTECT(1);
+    return Rval;
 };
 }
 
 int main (int argc, char** argv) {
-	// rmandel(nth, xl, xr, yb, yt, inc, maxiters, sched, chunksize);
-	return 0;
+    // rmandel(nth, xl, xr, yb, yt, inc, maxiters, sched, chunksize);
+    return 0;
 }
-
-    
